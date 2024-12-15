@@ -1,0 +1,11 @@
+<MyScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        ScrollView:
+            MDDataTable:
+                size_hint: 1, None
+                height: self.minimum_height  # Đảm bảo chiều cao đủ lớn để chứa bảng dữ liệu
+                column_data:
+                    [("No.", dp(30)), ("Name", dp(40)), ("Age", dp(40)), ("Country", dp(40))]
+                row_data:
+                    [(1, "Alice", 30, "USA"),(2, "Bob", 25, "UK"),(3, "Charlie", 35, "Canada")]

@@ -1,0 +1,58 @@
+MDScreen:
+    name: 'man_hinh_dang_nhap'
+    Image:
+        source: 'maintheme.jpg'
+        size_hint: None, None
+        width: '360000000dp'
+        height: '640000dp'
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    MDLabel:
+        id: quan_li
+        text: 'QUẢN LÍ NHÂN KHẨU'
+        color: (0,128,128,1)
+        font_size: 25
+        halign: 'center'
+        size_hint_y: None
+        height: self.texture_size[1]
+        padding_x: 15
+        pos_hint: {'center_x': 0.5, 'center_y': 0.65}    
+    MDTextField:
+        id: user
+        hint_text: 'tên tài khoản'
+        icon_right: 'account'
+        size_hint_x: None
+        width: 200
+        font_size: 18
+        pos_hint: {'center_x': 0.5, 'center_y': 0.52}
+    MDTextField:
+        id: password
+        hint_text: 'mật khẩu'
+        icon_right: 'eye-off'
+        size_hint_x: None
+        width: 200
+        font_size: 18
+        pos_hint: {'center_x': 0.5, 'center_y': 0.45}
+        password: True
+    MDTextButton:
+        text: 'đăng nhập'
+        pos_hint: {'center_x': 0.4, 'center_y': 0.4}
+        font_size: 18
+        halign: 'center'
+        size_hint_x: None
+        on_press: app.logger()
+        on_press: app.showdata(self)
+    MDTextButton:
+        text: 'Xóa'
+        pos_hint: {'center_x': 0.6, 'center_y': 0.4}
+        font_size: 18
+        halign: 'center'
+        size_hint_x: None
+        on_press: app.clear()
+    MDTextButton:
+        text: 'Tạo tài khoản'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.35}
+        font_size: 18
+        halign: 'center'
+        size_hint_x: None
+        on_press: root.manager.current = 'tao_tai_khoan'
+    

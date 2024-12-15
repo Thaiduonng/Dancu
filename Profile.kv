@@ -1,0 +1,32 @@
+Screen:
+    name: 'profile'
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: '8dp'
+        padding: '8dp'
+        Image:
+            source: 'user3.png'
+        MDLabel:
+            text: 'Người dùng'
+            size_hint_y: None
+            height:self.texture_size[1]
+        ScrollView:
+            MDList:
+                OneLineIconListItem:
+                    text: 'Hiện thị thông tin chi tiết'
+                    IconLeftWidget:
+                        icon: 'account-details'
+                        on_press: root.manager.current = 'profile'
+                OneLineIconListItem:
+                    text: 'Cập nhật thông tin'
+                    IconLeftWidget:
+                        icon: 'account-edit'
+                        on_press: root.manager.current = 'upload'
+                OneLineIconListItem:
+                    text: 'Đăng xuất'
+                    IconLeftWidget:
+                        icon: 'logout'
+                        on_press: root.manager.current = 'man_hinh_dang_nhap'
+    MDTextButton:
+        text: 'Trở về'
+        on_press: root.manager.current = 'giao_dien_chinh'
