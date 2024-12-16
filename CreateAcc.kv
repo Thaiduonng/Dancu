@@ -17,7 +17,7 @@ Screen:
         padding_x: 15
         pos_hint: {'center_x': 0.5, 'center_y': 0.65}
     MDTextField:
-        id: user
+        id: new_user
         hint_text: 'tên tài khoản'
         icon_right: 'account'
         size_hint_x: None
@@ -25,7 +25,7 @@ Screen:
         font_size: 18
         pos_hint: {'center_x': 0.5, 'center_y': 0.52}
     MDTextField:
-        id: password
+        id: new_password
         hint_text: 'mật khẩu'
         icon_right: 'eye-off'
         size_hint_x: None
@@ -34,7 +34,7 @@ Screen:
         pos_hint: {'center_x': 0.5, 'center_y': 0.45}
         password: True
     MDTextField:
-        id: password
+        id: password_confirm
         hint_text: 'nhập lại mật khẩu'
         icon_right: 'eye-off'
         size_hint_x: None
@@ -48,15 +48,16 @@ Screen:
         font_size: 18
         halign: 'center'
         size_hint_x: None
-        on_press: app.addAcount()
-        on_press: app.showdata(self)
+        on_press: app.register_user()
+        on_press: root.manager.current = 'tao_tai_khoan'
     MDTextButton:
         text: 'Xóa'
         pos_hint: {'center_x': 0.6, 'center_y': 0.33}
         font_size: 18
         halign: 'center'
         size_hint_x: None
-        on_press: app.clear()
+        on_press: app.clearRegister()
+        on_press: root.manager.current = 'tao_tai_khoan'
     MDTextButton:
         text: 'Trở về'
         on_press: root.manager.current = 'man_hinh_dang_nhap'

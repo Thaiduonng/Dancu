@@ -39,15 +39,15 @@ MDScreen:
         font_size: 18
         halign: 'center'
         size_hint_x: None
-        on_press: app.logger()
-        on_press: app.showdata(self)
+        on_press: app.login_user()
+        on_press: root.manager.current = 'man_hinh_dang_nhap'
     MDTextButton:
         text: 'Xóa'
         pos_hint: {'center_x': 0.6, 'center_y': 0.4}
         font_size: 18
         halign: 'center'
         size_hint_x: None
-        on_press: app.clear()
+        on_press: app.clearLogin()
     MDTextButton:
         text: 'Tạo tài khoản'
         pos_hint: {'center_x': 0.5, 'center_y': 0.35}

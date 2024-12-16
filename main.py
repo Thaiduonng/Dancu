@@ -22,7 +22,6 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton
 from kivymd.app import MDApp
 
-
 class LoginScreen(Screen):
     pass
 class CreateAccScreen(Screen):
@@ -79,13 +78,10 @@ class Quan_liApp(MDApp):
             use_pagination=True,
             check=True,
             column_data=[
-                ("Số thứ tự", dp(30)),
-                ("Căn cước", dp(30)),
-                ("Tên", dp(30)),
-                ("Tuổi", dp(30)),
-                ("Địa chỉ", dp(40)),
-                ("Số điện thoại", dp(40)),
-                ("mật khẩu", dp(40))
+                ("id", dp(30)),
+                ("name", dp(30)),
+                ("age", dp(30)),
+                ("city", dp(30))
             ],
             row_data=[
                 (
@@ -93,9 +89,6 @@ class Quan_liApp(MDApp):
                 i[:][1],
                 i[:][2],
                 i[:][3],
-                i[:][4],
-                i[:][5],
-                i[:][6],
 
                 )
                 for i in data
@@ -144,58 +137,111 @@ class Quan_liApp(MDApp):
                 import sqlite3
                 vt=sqlite3.connect("Dancuxa.db")
                 im=vt.cursor()
-                im.execute("select * from person where person_id=?",(i))
+                im.execute("select * from person where person_id=?",(i,))
                 data=im.fetchall()
                 for j in data:
-                    sc.get_screen("upd").ids.cccd.text=j[1]
-                    sc.get_screen("upd").ids.name.text=j[2]
-                    sc.get_screen("upd").ids.age.text=j[3]
-                    sc.get_screen("upd").ids.city.text=j[4]
-                    sc.get_screen("upd").ids.sdt.text=j[5]
-                    sc.get_screen("upd").ids.mk.text=j[6]
+                    sc.get_screen("upd").ids.name.text=j[1]
+                    sc.get_screen("upd").ids.age.text=j[2]
+                    sc.get_screen("upd").ids.city.text=j[3]
 
         sc.current = "upd"
     def addnewpage(self):
         sc.current = "add"
     def back(self, instance):
         sc.current = "page"
-    def update(self,cccd,username,age,city,sdt,mk):
+    def update(self,username,age,city):
         for i in contacts:
             if i:
                 import sqlite3
                 vt = sqlite3.connect("Dancuxa.db")
                 im = vt.cursor()
-                im.execute("update person set cccd=?, username=?, age=?, city=?, sdt=?, mk=? where person_id=?",(cccd,username,age,city,sdt,mk,i))
+                im.execute("update person set username=?, age=?, city=? where person_id=?",(username,age,city,i))
                 vt.commit()
                 sc.get_screen("page").ids.datatable.remove_widget(self.data_tables)
                 self.add_datatable()
         contacts.clear()
         sc.current = "page"
-    def add(self,cccd,username,age,city,sdt,mk):
+    def add(self,username,age,city):
         import sqlite3
         vt = sqlite3.connect("Dancuxa.db")
         im = vt.cursor()
-        im.execute("insert into person(cccd,username,age,city,sdt,mk) VALUES(?,?,?,?,?,?)",(cccd,username,age,city,sdt,mk))
+        im.execute("insert into person(username,age,city) VALUES(?,?,?)",(username,age,city))
         vt.commit()
         sc.get_screen("page").ids.datatable.remove_widget(self.data_tables)
         self.add_datatable()
         contacts.clear()
         sc.current = "page"
 
+    def register_user(self):
+        # Lấy giá trị từ các trường nhập liệu
+        username = self.root.get_screen('tao_tai_khoan').ids.new_user.text
+        password = self.root.get_screen('tao_tai_khoan').ids.new_password.text
+        password_confirm = self.root.get_screen('tao_tai_khoan').ids.password_confirm.text
 
+        # Kiểm tra các trường thông tin
+        if not username or not password or not password_confirm:
+            self.show_dialog("Lỗi", "Vui lòng điền đầy đủ thông tin.")
+            return
 
+        if password != password_confirm:
+            self.show_dialog("Lỗi", "Mật khẩu và xác nhận mật khẩu không khớp.")
+            return
+
+        # Thêm tài khoản vào cơ sở dữ liệu
+        import sqlite3
+        conn = sqlite3.connect("taiKhoan.db")
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                INSERT INTO account (username, password) VALUES (?, ?)
+            """, (username, password))
+            conn.commit()
+            self.show_dialog("Thành công", "Tài khoản đã được tạo.")
+            self.root.current = 'man_hinh_dang_nhap'
+        except sqlite3.IntegrityError:
+            self.show_dialog("Lỗi", "Tên tài khoản đã tồn tại.")
+        finally:
+            conn.close()
+
+    def login_user(self):
+        # Lấy dữ liệu từ các trường nhập liệu
+        username = self.root.get_screen('man_hinh_dang_nhap').ids.user.text
+        password = self.root.get_screen('man_hinh_dang_nhap').ids.password.text
+
+        # Kiểm tra các trường thông tin
+        if not username or not password:
+            self.show_dialog("Lỗi", "Vui lòng điền đầy đủ thông tin.")
+            return
+
+        # Kiểm tra trong cơ sở dữ liệu
+        import sqlite3
+        conn = sqlite3.connect("taiKhoan.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM account WHERE username = ? AND password = ?", (username, password))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user:
+            self.show_dialog("Thành công", f"Xin chào {username}!")
+            self.root.current = "giao_dien_chinh"
+        else:
+            self.show_dialog("Lỗi", "Tên tài khoản hoặc mật khẩu không đúng, vui lòng đăng nhập lại!")
 
     def logger(self):
-        self.root.get_screen('man_hinh_dang_nhap').ids.quan_li.text = f"Chào {self.root.get_screen('man_hinh_dang_nhap').ids.user.text}"
-    '''def clear(self):
+        self.root.get_screen('man_hinh_dang_nhap').ids.quan_li.text = f'Chào {self.root.get_screen('man_hinh_dang_nhap').ids.user.text}'
+    def clearLogin(self):
         self.root.get_screen('man_hinh_dang_nhap').ids.quan_li.text = "QUẢN LÍ NHÂN KHẨU"
         self.root.get_screen('man_hinh_dang_nhap').ids.user.text = ""
-        self.root.get_screen('man_hinh_dang_nhap').ids.password.text =""'''
+        self.root.get_screen('man_hinh_dang_nhap').ids.password.text =""
+    def clearRegister(self):
+        self.root.get_screen('tao_tai_khoan').ids.new_user.text = ""
+        self.root.get_screen('tao_tai_khoan').ids.new_password.text = ""
+        self.root.get_screen('tao_tai_khoan').ids.password_confirm.text = ""
     def showdata(self, instance):
         if self.root.get_screen('man_hinh_dang_nhap').ids.user.text == "" or self.root.get_screen('man_hinh_dang_nhap').ids.password.text == "":
             check_string = 'Vui lòng nhập tên tài khoản và mật khẩu'
         else:
-            check_string = f"tên tài khoản: {self.root.get_screen('man_hinh_dang_nhap').ids.user.text} \nmật khẩu: {self.root.get_screen('man_hinh_dang_nhap').ids.password.text}"
+            check_string = f'tên tài khoản: {self.root.get_screen('man_hinh_dang_nhap').ids.user.text} \nmật khẩu: {self.root.get_screen('man_hinh_dang_nhap').ids.password.text}'
         close_button = MDIconButton(icon='close', on_release=self.close_dialog)
         login_button = MDIconButton(icon='login', on_release= self.interface)
         self.dialog = MDDialog(
@@ -212,6 +258,15 @@ class Quan_liApp(MDApp):
     def interface(self, instance):
         self.dialog.dismiss()
         self.root.get_screen('man_hinh_dang_nhap').manager.current = 'giao_dien_chinh'
+
+    def show_dialog(self, title, message):
+        dialog = MDDialog(
+            title=title,
+            text=message,
+            size_hint=(0.8, 0.8),
+            buttons=[MDFlatButton(text="OK", on_release=lambda x: dialog.dismiss())]
+        )
+        dialog.open()
 
 
 if __name__ == '__main__':
